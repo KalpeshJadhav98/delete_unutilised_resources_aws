@@ -2,13 +2,11 @@ pipeline {
     agent any
 
     parameters {
-        string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-east-1', description: 'AWS region')
+        string(name: 'AWS_DEFAULT_REGION', defaultValue: 'ap-south-1', description: 'AWS region')
     }
 
     environment {
         PYTHON = "python3"
-        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')  // make sure this matches your Jenkins credential ID
-        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_key')
         AWS_DEFAULT_REGION = "${params.AWS_DEFAULT_REGION}"
     }
 
@@ -34,12 +32,19 @@ pipeline {
             }
         }
 
-        stage('Run Cleanup Script') {
+        stage('Set AWS Credentials') {
             steps {
-                sh '''
-                    echo "Running EBS cleanup in region $AWS_DEFAULT_REGION"
-                    ${PYTHON} deleted_unused_ebs_volumes_across_regions.py
-                '''
+                // Use Jenkins credentials, never hardcode AWS keys
+                withCredentials([usernamePassword(
+                    credentialsId: 'my_aws_credentials_id', 
+                    usernameVariable: 'AKIAVMTVAR4UYL5K6BB3', 
+                    passwordVariable: 'Ff0JW0trwgehZR6oOFCNLEk04gMmwZm544k/9OR6')]) {
+                    
+                    sh '''
+                        echo "Running EBS cleanup in region $AWS_DEFAULT_REGION"
+                        ${PYTHON} deleted_unused_ebs_volumes_across_regions.py
+                    '''
+                }
             }
         }
     }
