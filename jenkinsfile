@@ -32,13 +32,13 @@ pipeline {
             }
         }
 
-        stage('Set AWS Credentials') {
+        stage('Run Cleanup Script') {
             steps {
-                // Use Jenkins credentials, never hardcode AWS keys
+                // Inject AWS credentials securely
                 withCredentials([usernamePassword(
                     credentialsId: 'my_aws_credentials_id', 
-                    usernameVariable: 'AKIAVMTVAR4UYL5K6BB3', 
-                    passwordVariable: 'Ff0JW0trwgehZR6oOFCNLEk04gMmwZm544k/9OR6')]) {
+                    usernameVariable: 'AKIAVMTVAR4U6YL7J55G', 
+                    passwordVariable: 'kP4zbCwKi+vakR1MnYBn96WBgdJplWrqtXLOncv+')]) {
                     
                     sh '''
                         echo "Running EBS cleanup in region $AWS_DEFAULT_REGION"
