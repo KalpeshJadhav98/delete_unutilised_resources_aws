@@ -2,15 +2,13 @@ pipeline {
     agent any
 
     parameters {
-        string(
-            name: 'AWS_DEFAULT_REGION', 
-            defaultValue: 'us-east-1', 
-            description: 'AWS region to run the cleanup script'
-        )
+        string(name: 'AWS_DEFAULT_REGION', defaultValue: 'us-east-1', description: 'AWS region')
     }
 
     environment {
         PYTHON = "python3"
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')
+        AWS_SECRET_ACCESS_KEY = credentials('aws_secret_key')
         AWS_DEFAULT_REGION = "${params.AWS_DEFAULT_REGION}"
     }
 
@@ -30,23 +28,18 @@ pipeline {
             }
         }
 
-        stage('Run EBS Cleanup Script') {
+        stage('Run Script') {
             steps {
                 sh '''
-                    echo "Running EBS cleanup in region: $AWS_DEFAULT_REGION"
-                    ${PYTHON} deleted_unused_ebs_volumes_across_regions.py --region $AWS_DEFAULT_REGION
+                    echo "Running cleanup in region $AWS_DEFAULT_REGION"
+                    ${PYTHON} deleted_unused_ebs_volumes_across_regions.py
                 '''
             }
         }
     }
 
     post {
-        success {
-            echo 'EBS cleanup executed successfully ✅'
-        }
-        failure {
-            echo 'EBS cleanup failed ❌'
-        }
+        success { echo 'EBS cleanup executed successfully ✅' }
+        failure { echo 'EBS cleanup failed ❌' }
     }
 }
-
