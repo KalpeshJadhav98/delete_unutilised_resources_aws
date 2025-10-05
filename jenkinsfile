@@ -32,11 +32,11 @@ pipeline {
             }
         }
 
-       stage('Run Cleanup Script') {
-    steps {
-        // Inject AWS credentials securely
-        withCredentials([usernamePassword(
-            credentialsId: 'my_aws_credentials_id', 
+        stage('Run Cleanup Script') {
+            steps {
+                // Inject AWS credentials securely
+                withCredentials([usernamePassword(
+                    credentialsId: 'my_aws_credentials_id', 
             usernameVariable: 'AKIAVMTVAR4U6YL7J55G', 
             passwordVariable: 'kP4zbCwKi+vakR1MnYBn96WBgdJplWrqtXLOncv+')]) {
             
@@ -46,14 +46,10 @@ pipeline {
                 # Export credentials so Python boto3 can use them
                 export AWS_ACCESS_KEY_ID=$AKIAVMTVAR4U6YL7J55G
                 export AWS_SECRET_ACCESS_KEY=$kP4zbCwKi+vakR1MnYBn96WBgdJplWrqtXLOncv+
-                
-                 # Run Python cleanup script
-                python3 delete_unused_ebs_volume_across_regions.py
-            '''
-        }
-    }
-}
 
+                        # Run Python cleanup script
+                        python3 delete_unused_ebs_volume_across_regions.py
+                    '''
                 }
             }
         }
