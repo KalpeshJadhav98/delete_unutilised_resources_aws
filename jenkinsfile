@@ -47,7 +47,8 @@ pipeline {
                 export AWS_ACCESS_KEY_ID=$AKIAVMTVAR4U6YL7J55G
                 export AWS_SECRET_ACCESS_KEY=$kP4zbCwKi+vakR1MnYBn96WBgdJplWrqtXLOncv+
                 
-                ${PYTHON} delete_unused_ebs_volume_across_regions.py
+                 # Run Python cleanup script
+                python3 delete_unused_ebs_volume_across_regions.py
             '''
         }
     }
