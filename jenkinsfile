@@ -7,7 +7,7 @@ pipeline {
 
     environment {
         PYTHON = "python3"
-        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')
+        AWS_ACCESS_KEY_ID = credentials('aws_access_key_id')  // make sure this matches your Jenkins credential ID
         AWS_SECRET_ACCESS_KEY = credentials('aws_secret_key')
         AWS_DEFAULT_REGION = "${params.AWS_DEFAULT_REGION}"
     }
@@ -19,19 +19,25 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install Python & Dependencies') {
             steps {
                 sh '''
-                    ${PYTHON} -m pip install --upgrade pip
-                    ${PYTHON} -m pip install boto3 botocore
+                    echo "Checking Python version"
+                    ${PYTHON} --version || sudo apt-get install -y python3
+
+                    echo "Upgrading pip"
+                    ${PYTHON} -m ensurepip --upgrade || ${PYTHON} -m pip install --upgrade pip
+
+                    echo "Installing boto3 and botocore"
+                    ${PYTHON} -m pip install --upgrade boto3 botocore
                 '''
             }
         }
 
-        stage('Run Script') {
+        stage('Run Cleanup Script') {
             steps {
                 sh '''
-                    echo "Running cleanup in region $AWS_DEFAULT_REGION"
+                    echo "Running EBS cleanup in region $AWS_DEFAULT_REGION"
                     ${PYTHON} deleted_unused_ebs_volumes_across_regions.py
                 '''
             }
