@@ -18,7 +18,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Replace with your Git repository URL
-                git branch: 'main', url: 'https://your-repo-url.git'
+                git branch: 'main', url: https://github.com/KalpeshJadhav98/delete_unutilised_resources_aws.git
             }
         }
 
