@@ -42,7 +42,7 @@ pipeline {
                     
                     sh '''
                         echo "Running EBS cleanup in region $AWS_DEFAULT_REGION"
-                     python3 deleted_unused_ebs_volumes_across_regions.py
+                             deleted_unused_ebs_volumes_across_regions.py
 
                     '''
                 }
